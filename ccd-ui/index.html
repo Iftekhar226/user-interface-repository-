@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>California Cafe Directory</title>
+    <link rel="stylesheet" href="css/bootstrap.css"><!--For linking bootstrap file!-->
+    <link rel="stylesheet" href="css/styles.css"><!--For linking style file!-->
+  </head>
+
+  <body>
+    
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12" id="header-wrapper">
+          <div class="container">
+            <div class="row">
+              <div class="col-12" id="header">
+                <h2>California Cafe Directory</h2>
+              </div>
+              <div class="col-12" id="search-wrapper">
+                <input id="myId" type="text" placeholder="Search your favorite cafes!" onkeyup="myFunction(this.value);"  >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-12" id="table-wrapper">
+              <table>
+                <thead>
+                    <tr class="table100-head">
+                    <th class="column1">S No</th>
+                    <th class="column2">Cafe Name</th>
+                    <th class="column3">Address</th>
+                    <th class="column4">Postal Code</th>
+                    <th class="column5">Lat</th>
+                    <th class="column6">Long</th>
+                  </tr>
+                </thead>
+                <tbody id="apiRow"> <!-- create tbody inorder to insert row and column dynamically from API!-->
+                    
+                    
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+	<script>
+	var lCafes,lPlaces; //These tow variable are to store the APIs return JSON ArrayList of object value inorder to perform operations.
+	var j,i;
+	
+
+	
+	fetch('https://raw.githubusercontent.com/debojyoti/places-fake-rest-api/master/cafes.json')//Getting the list of cafe from API.
+  .then(response => {
+    return response.json()
+  })
+  .then(data => {
+    this.lCafes=data;//Storing the  JSON AraayList of object of cafes value in lCafes.
+	})
+  .catch(err => {
+    console.log(err);//if error coming then print inside console inorder to debugging 
+  });
+
+  fetch('https://raw.githubusercontent.com/debojyoti/places-fake-rest-api/master/places.json')//getting the list of place from API. 
+  .then(response => {
+    return response.json()
+  })
+  .then(data => {
+		this.lPlaces=data; // Storing the  JSON AraayList of object of places value in lPlaces. 
+    
+    createTableOnLoad();   // createTableOnLoad invoke this method to ptrint table in tag <tbody> atfer load data from APIs 
+  })
+  .catch(err => {
+    console.log(err);
+  });
+  
+
+  function createTableOnLoad(){ // This method print table element danimacally 
+
+    var table = document.getElementById("apiRow");//Getting the tag <tbody > inorder to dynamically putting Row and Column 
+
+    for(i in lCafes.cafes) // Fetch the value lCafes  using loop 
+		{ 
+				for( j  in lPlaces.places) // Fetch the value lPlaces  using loop 
+				{
+			
+					if((lCafes.cafes[i].location_id)==(lPlaces.places[j].id)) //checking  id or mapping Id same then do 
+					{
+						var row = table.insertRow(-1); //Creating row dynamically					
+
+						var cell1 = row.insertCell(0); //Creating  columns here
+						var cell2 = row.insertCell(1);
+						var cell3 = row.insertCell(2);
+						var cell4 = row.insertCell(3);
+						var cell5 = row.insertCell(4);
+						var cell6 = row.insertCell(5);
+						
+						cell1.innerHTML = k;	//putting values from lCafes.cafes and lPlaces.places except  k just  for srial number columns  values  . 
+						cell2.innerHTML = lCafes.cafes[i].name; 
+						cell3.innerHTML = lPlaces.places[j].street_no+" "+lPlaces.places[j].locality;
+						cell4.innerHTML = lPlaces.places[j].postal_code;
+            cell5.innerHTML = lPlaces.places[j].lat;
+						cell6.innerHTML = lPlaces.places[j].long;
+						
+						cell1.className = "column1";//Adding classes inorder to implement crossponding styles of each column.  
+						cell2.className = "column2";
+						cell3.className = "column3";
+						cell4.className = "column4";
+						cell5.className = "column5";
+						cell6.className = "column6";
+					
+						k=k+1;//k  just  for getting srial number columns  values  .
+					}
+	 			}
+		
+		}
+  }
+
+	var k=1; 
+	
+	function myFunction(value) //This method is search cafes places details and update the tag <tboday> list the values of search box here 'value' is subString.
+	{ 
+		
+		var myTable = document.getElementById("apiRow");//Getting the tag <tbody > inorder to dynamically manipulating or deleting Row and Column 
+		var rowCount = myTable.rows.length;
+		for (var x=rowCount-1; x>=0; x--) 
+		{
+			myTable.deleteRow(x);
+		}
+		
+		table = document.getElementById("apiRow");//Getting the tag <tbody > inorder to dynamically manipulating  Row and Column 
+		k=1;
+		
+		for(i in lCafes.cafes)// Fetch the value lCafes  using loop 
+		{ 
+			
+			if(((lCafes.cafes[i].name).toLowerCase()).includes(value.toLowerCase())) //searching substring value of search box and cafes name converting both in lower case inorder  making search insensitivety 
+			{
+				for( j  in lPlaces.places)// Fetch the value lPlaces  using loop
+				{
+			
+					if((lCafes.cafes[i].location_id)==(lPlaces.places[j].id))//checking mapping Id are same or not 
+					{
+						var row = table.insertRow(-1);//Creating row dynamically
+
+						var cell1 = row.insertCell(0); //Creating  columns here
+						var cell2 = row.insertCell(1);
+						var cell3 = row.insertCell(2);
+						var cell4 = row.insertCell(3);
+						var cell5 = row.insertCell(4);
+						var cell6 = row.insertCell(5);
+
+						cell1.innerHTML = k;	//putting values from lCafes.cafes and lPlaces.places except  k just  for srial number columns  values 
+						cell2.innerHTML = lCafes.cafes[i].name; 
+							
+						cell3.innerHTML = lPlaces.places[j].street_no+" "+lPlaces.places[j].locality;
+						cell4.innerHTML = lPlaces.places[j].postal_code;
+						cell5.innerHTML = lPlaces.places[j].lat;
+						cell6.innerHTML = lPlaces.places[j].long;
+						
+						cell1.className = "column1";//Adding classes inorder to implement crossponding styles of each column.
+						cell2.className = "column2";
+						cell3.className = "column3";
+						cell4.className = "column4";
+						cell5.className = "column5";
+						cell6.className = "column6";
+
+						k=k+1;//k  increment for getting srial number columns  values.
+					}
+	 			}
+			}
+		}
+		
+
+		
+	};
+	
+	
+	</script>
+  </body>
+</html>
+				
+	   
